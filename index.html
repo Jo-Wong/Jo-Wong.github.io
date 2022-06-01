@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title> MHD Simulation of Rayleigh Taylor Instability </title>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+body {background-color: powderblue; margin-top:25px;}
+h1   {color: blue; margin:15px; margin-top:35px;}
+p    {text-align: justify; text-justify: interword; font-size: 18px; margin:15px;}
+img  {width: 50%; height: 50%;}
+video  {width: 50%; height: 50%;}
+figcaption {text-align: center;font-size:20}
+div.center {text-align: center;}
+</style>
+
+</head>
+<body>
+<div style="display:block; width:100%;">
+<div style="width:50%; float: left; display: inline-block;">
+
+<h1>What are Rayleigh-Taylor Instabilities?</h1>
+<p>Rayleigh-Taylor (RT) instabilities are a type of instability that occurs at the interface between two fluids with different densities and the lighter fluid is being accelerated toward the denser one. The archetypical example is of a denser fluid (oil) sitting on top of a lighter fluid (water), both being pulled by gravity, as shown in Figure 1. Initially, the interface is unstable pressure equilibrium. The probability for a perturbation increases exponentially with time, and eventually, there will be some disturbance to the interface, sending the lighter fluid towards the denser one (or vice versa). This lowers the potential energy of the system, encouraging more denser medium to be displaced downward. As a result, the disturbance grows, creating the instability.</p>
+
+<h1>Rayleigh-Taylor Instabilities in the ISM</h1>
+<p>Though present in a diverse set of astrophysical contexts, one way Rayleigh-Taylor instabilities arise, and interact with the ISM, is in supernova remnants (SNR). SNR are composed of several shock layers, as depicted in Figure 2. The outer front is called the main shock and this represents ISM material that has been pushed by the outward-moving supersonic ejection of stellar material. It is compressed as the material closer to the SN is accelerated and moves faster than material farther away. At the same time, ISM material exerts a force back on the SN, resulting in a reverse shock. In between the main and reverse shock is a layer of shocked and stagnant SN material, called the piston layer. The interface between the piston and main shock has the conditions necessary for the formation of Rayleigh-Taylor instabilities. (1) It is an interface between two fluids of different densities (SN and ISM material, of which SN has the higher density). (2) The SN material is slowed down as it hits against the ISM. The deceleration is equivalent to an effective gravity. (3) Initially, the two interfaces are in pressure equilibrium, known also as a contact discontinuity. Any perturbation will result in an instability in which some initial mixing will be enough to start a snowball effect as some initial mixing encourages even more mixing, as this is a more energetically favorable state.</p>
+
+<br/>
+
+<p>Several factors shape the formation of RT instabilities. For a given inviscid, incompressible ideal fluid, the growth rate of Rayleigh-Taylor instabilities is given by </p>
+
+<p style="text-align:center">\(\gamma(k) = \sqrt{gk(\alpha_2 - \alpha_1)}\)</p> 
+ 
+<p>where k is the wavenumber, representing the inverse of the periodic length scale at which the instability grows, and \(\alpha_1\) and \(\alpha_2\) are defined as \(\alpha_x = \frac{\rho_x}{\rho_1 + \rho_2}\). The last term is also known as the Atwood number, \(\frac{\rho_1 - \rho_2}{\rho_1 + \rho_2}\). Interfaces with higher Atwood number have instabilities that grow more quickly.</p> 
+
+<p>Growth rate also increases with wavenumber. This can be interpreted as saying that, at small distances, these instabilities grow more quickly because of the effect that nearby instabilities encourage the growth of even more instability. This equation for the growth rate is unphysical though because it diverges as \(\lambda \rightarrow 0\). Most real fluid have some non-zero viscosity, which is an internal frictional force between adjacent layers of fluid that are in relative motion, and that will tend to dampen the growth of instabilities at low wavelengths. For viscid, incompressible ideal fuids, the growth rate is given by</p>
+
+<p style="text-align:center">\(\gamma^2 + 2\nu k^2\gamma - kg(\alpha_2 - \alpha_1)=0\)</p>
+
+<p>This equations resembles that of a damped harmonic oscillator, with damping coefficient given by \(2\nu k^2\), where \(\nu\) is the kinematic viscosity, and peak growth rate of </p>
+
+<p style="text-align:center">\(\gamma\ast = \frac{1}{2}(\frac{g^2}{\nu}(\alpha_2 - \alpha_1)^2)^{1/3}\)</p>
+
+<p>which occurs at a wavenumber given by </p>
+
+<p style="text-align:center">\(k_\ast = \frac{1}{2}(\frac{g}{\nu^2}(\alpha_2 - \alpha_1))^{1/3}\).</p>
+
+<p>Magnetic fields also affect the growth of Rayleigh-Taylor instabilities. They act as an external force that stabilizes the fluid in certain directions. A magnetic field creates a force in two ways: (1) there is a "magnetic pressure force" that moves material from areas of high to low magnetic pressure (aka energy density) and (2) there is a "magnetic tension" force in directions perpendicular to the field lines when there is a curvature present in the lines, that acts to align the magnetic field. The acceleration due to these forces are described by the first and second terms in the equation below. </p>
+
+<p style="text-align:center">\(a = -\nabla\frac{B^2}{2\mu_0} + (u \cdot \nabla)B\)</p>
+
+<p> <u>Disclaimer</u>: This is a shallow introductory technical description of Rayleigh-Taylor instabilities. Many subtle considerations have been ignored here (such as linear and non-linear regimes). For additional details, please refer to (Chandrasekhar 1961) or your favorite fluid dynamics textbook. </p>
+
+<br/>
+
+<p>Now that we have a general understanding of Rayleigh-Taylor instabilities in the ISM, and the different factors that shape it, we can dive into a few examples. The first is based on a paper by (Velazquez, et al. 1998), in which they analyzed the growth of natent RT instabilities in the Tycho SN. The Tycho SN is a Type I supernova, meaning that it does not have a central star, and as such, no magnetic field. In their analysis, they only considered viscous effects on the instability.</p>
+
+<p>In a VLA observation of the SN, taken at 1".4 resolution at 1.4 GHz, they noticed regularly distributed protrusions at the outer rim, as indicated in Figure 3. These protrusions, and their regularity, were suggestive of RT instabilities. To test this, they measured their periodicity, which they found to be \(\lambda = 0.89 \pm 0.08\ pc\), and compared it to theoretically expected wavelength of peak growth, \(\lambda_\ast = 1 / k_\ast\), which can be rewritten in terms of measurable quantities</p>
+
+<p style="text-align:center">\(\lambda_\ast = 0.39(\frac{T_{p}^5}{g_{eff}} \alpha n_{p}^2)^{1/5}\)</p>
+
+<p> where \(T_{p}\) is the piston temperature in units of \(10^7 K\), \(\ g_{eff}\) is the effective gravity in units of \(10^{-2}\ cm \cdot s^{-2}\), and \(n_{p}\) is the number density of the piston in units of \(1\ cm^{-3}\). </p>
+
+<p>Based on various measurements of these quantities, the expected peak wavelength were \(1.00 \pm 0.20\), \(1.20 \pm 0.30\), and \(0.91^{+0.60}_{-0.80}\ pc\), which generally agree with the measured wavelength. </p>
+
+<br/>
+
+<p>RT (and other) instabilities at the interface between SN and ISM can play an important role in ISM physics. The stellar material in SN is enriched with heavy elements created by nuclear fusion towards the end of the star's life. Turbulent mixing infuses the ISM with these metals, which are an important cooling mechanism.</p>
+
+<br/>
+
+<p>RT instabilities have also been observed in the Crab Nebula. The nebula displays a lot of filamentary structure whose origin is most likely the imprint of the magnetic field accelerating particles via synchrotron. However, the finer, small-scale filaments are believed to be RT fingers of a thin layer of stellar ejecta siphoning into the synchrotron nebula. ?????????????????????????????????????????</p>
+
+<h1>Modeling the Effect of Magnetic Fields in RT Instabilities: Methodology</h1>
+<p>I have been interested in modeling the effect of magnetic fields on the growth of RT instabilities. To do so, I have been using a helpful tutorial by Philip Mocz (ref _????????_) on creating RT simulations in Python using a technique called the Finite Volume Method (FVM). Essentially how it works is, you divide your fluid into fluid elements called cells, each of which has an initial set of "primitive" variables that define the state of the fluid. In our case, these primitive variables are mass, velocity, and pressure, and the vector potential. A set of equations, called the Euler equations, describe the time evolution of the variables. In addition, we have source terms that perturb the system - in our case, these sources are the effective gravity and the acceleration due to magnetic forces. The Euler equations are summarized below.
+
+<p style="text-align:center">&nbsp;&nbsp; Mass Continuity:&nbsp;&nbsp; \(\frac{\partial\rho}{\partial t} + \rho\ (\nabla \cdot \vec{v})=0\)</p>
+<p style="text-align:center">&nbsp;&nbsp; Momentum Equation:&nbsp;&nbsp; \(\rho\ (\frac{\partial\vec{v}}{\partial t} + \vec{v} \cdot \nabla \vec{v}) -\nabla P = \vec{J} \times \vec{B} + \rho g\ \hat y\)</p>
+<p style="text-align:center">&nbsp;&nbsp; Energy Equation:&nbsp;&nbsp; \(\rho\ (\frac{\partial e}{\partial t} + \nabla \cdot ((\rho e + P)\vec{v})\ ) = \rho v_y g\)</p>
+
+<p>On the left side, we have the equations for conservation of mass, momentum, and energy. On the right side, we have the source terms: gravity, which we've chosen to act in the y-direction, and the acceleration due to magnetic forces, \(\vec{J} \times \vec{B}\).</p>
+
+<p>In addition to these equations, we need some way of describing the evolution of the magnetic field itself. The dynamics of the magnetic field are constrained by the following equations. (Note: we've omitted the arrows above E, B, and A for simplicity.)</p>
+
+<p style="text-align:center">&nbsp;&nbsp; \(\nabla \cdot B = 0\)&nbsp;&nbsp; (Magnetic monopole constraint)</p>
+<p style="text-align:center">&nbsp;&nbsp; \(\nabla \cdot E = q / V\)&nbsp;&nbsp; (Gauss's law)</p>
+<p style="text-align:center">&nbsp;&nbsp; \(\nabla \times E = -\frac{\partial B}{\partial t}\)&nbsp;&nbsp; (Faraday's law)</p>
+<p style="text-align:center">&nbsp;&nbsp; \(\nabla \times B = \vec{\jmath}\)&nbsp;&nbsp; (Ampere's law)</p>
+<p style="text-align:center">&nbsp;&nbsp; \(\vec{\jmath} = \sigma ( E + v \times B )\)&nbsp;&nbsp; (Ohm's law)</p>
+
+<p>They can be summarized into one neat condition, which is the induction equation.</p>
+
+<p style="text-align:center">\(\frac{\partial A}{\partial t} = -(\vec{v} \cdot \nabla) A + \eta_p \nabla^2 A\)</p>
+
+<p>At each time step, we deliver a half-time step "kick" to the primitive variables with the source terms, extrapolate by half-time step with the Euler equations. and then determine the values of the primitive variables at the cell walls using their spatial gradients. The purpose of these calculations is to extrapolate the primitive variables to an intermediate value for numerical stability. Once we have a set of extrapolated primitive variables, we convert them to their conserved counterparts - density, momentum density, and energy density - that are exchanged between the fluid elements for a time step via the Euler equation. Since the conserved quantities are only exchanged between cells, their total sum is the same. We add another half-time step kick to the primitive variables to complete the iteration.</p>
+
+<p>With this framework in place, we are ready to simulate RT instabilities in magnetic fields!</p>
+
+<h1>Modeling the Effect of Magnetic Fields in RT Instabilities: Results</h1>
+<p>In our example simulation, we begin with a two-layer 2D fluid with the denser medium on top and a magnetic field in the 2D plane, as shown in Figure 4. Notice that the magnetic field displays concavity in the positive and negative y-directions: from this, we expect magnetic tension forces opposing this concavity. We also have regions of higher magnetic energy density on the edges, from which we expect pressure forces pointed towards the center of the fluid. Some of these forces (deliberately chosen) will work to counteract the pull of gravity in the negative y-direction.</p>
+
+<p>Weak magnetic field: If we begin with an weak magnetic field, the RT instability will evolve mostly unaffected by the magnetic forces. We see the typical plume of lighter material being expelled upwards into the denser material. (Note: in these simulations, density is being plotted. Yellow represents higher density, blue lower.) Over time, the two-fluid system homogenizes into one with intermediate density.</p>
+
+<p>Moderate magnetic field: If we increase the strength of the magnetic field, we begin to see the effect of magnetic forces counteracting the gravitational forces. Notably, a clump of high density material forms that sits on top of the head of the RT finger, preventing it from moving upwards.</p>
+
+<p>Strong magnetic field: If we increase the magnetic field even more, we see that the instability is unable to grow. The ripples of changing density that you see in the simulation are due to the initial inhomogenous magnetic field, from which arises magnetic forces that try to straighten the field lines and equilibriate the magnetic density, which then push the fluid in certain directions, resulting in thin lines/regions of higher density.</p>
+
+<p>The script used to generate the simulation is linked below. Feel free to play around the parameters (I have highlighted the ones that are most physically relevant) and see how that changes the dynamics of the instability!</p>
+
+<a href="finitevolume2.py">Link to MHD Simulation File</a>
+
+<h1>References</h1>
+<p>(1) Tycho SN: https://adsabs.harvard.edu/pdf/1998A%26A...334.1060V</p>
+<p>(2) Crab Nebula: https://authors.library.caltech.edu/53722/1/1996ApJ___456__225H.pdf</p>
+<p>(3) Reynold’s Number and Viscosity: https://www.grc.nasa.gov/www/BGH/reynolds.html</p>
+<p>(4) Reynold’s Number and Viscosity: https://www.grc.nasa.gov/www/k-12/airplane/boundlay.html</p>
+<p>(5) MHD Modeling: https://philip-mocz.medium.com/create-your-own-finite-volume-fluid-simulation-with-python-part-2-boundary-conditions-source-bda6994b4645</p>
+<p>(6) MHD Modeling: https://digitalrepository.wheatoncollege.edu/bitstream/handle/11040/24316/My_Honors_Thesis_v4Final.pdf?isAllowed=y&sequence=1</p>
+
+</div>
+
+<div style="width:50%; float: left; display: inline-block;">
+
+<div class="center">
+<figure>
+<img src="rayleigh_taylor.gif">
+<figcaption>Figure 1. Example of RT Instability. Dense medium sitting on top of a lighter medium, both under the influence of gravity oriented in the negative y-direction.</figcaption>
+</figure>
+</div>
+
+<div class="center">
+<figure>
+<img src="snr_layers.png">
+<figcaption>Figure 2. Schematic depicting the different layers of a typical SN. RT instabilities can develop at the interface between the piston and main shock layers to the non-zero density gradient and presence of an effective gravity (due to deceleration of the SN material in the piston layer). </figcaption>
+</figure>
+</div>
+
+
+<div class="center">
+<figure>
+<img src="tycho_sn.png">
+<figcaption>Figure 3. Observation of Tycho SN NE corner. Regularly-spaced protrusions indicated by arrows are believed to be natent RT instabilities developing at the interface between SN and ISM. </figcaption>
+</figure>
+</div>
+
+<div class="center">
+<video controls>
+<source src="sim_small.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+</div>
+
+<p style="text-align:center"> Video 1: Simulation of RT instability with Weak Magnetic Field </p>
+
+<div class="center">
+<video controls>
+<source src="sim_middle.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+</div>
+
+<p style="text-align:center"> Video 2: Simulation of RT instability with Moderate Magnetic Field </p>
+
+<div class="center">
+<video controls>
+<source src="sim_big.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+</div>
+
+<p style="text-align:center"> Video 3: Simulation of RT instability with Strong Magnetic Field </p>
+
+</div>
+</div>
+</body>
+</html>
