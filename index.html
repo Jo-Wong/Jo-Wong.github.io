@@ -13,7 +13,7 @@ h1   {color: blue; margin:15px; margin-top:35px;}
 p    {text-align: justify; text-justify: interword; font-size: 18px; margin:15px;}
 img  {width: 50%; height: 50%;}
 video  {width: 50%; height: 50%;}
-figcaption {text-align: center;font-size:20}
+figcaption {text-align: center;font-size:16px}
 div.center {text-align: center;}
 </style>
 
@@ -52,7 +52,7 @@ div.center {text-align: center;}
 
 <p style="text-align:center">\(a = -\nabla\frac{B^2}{2\mu_0} + (u \cdot \nabla)B\)</p>
 
-<p> <u>Disclaimer</u>: This is a shallow introductory technical description of Rayleigh-Taylor instabilities. Many subtle considerations have been ignored here (such as linear and non-linear regimes). For additional details, please refer to (Chandrasekhar 1961) or your favorite fluid dynamics textbook. </p>
+<p> <u>Disclaimer</u>: This is a light introductory technical description of Rayleigh-Taylor instabilities. Many subtle considerations have been ignored here (such as linear and non-linear regimes). For additional details, please refer to (Chandrasekhar 1961) or your favorite fluid dynamics textbook. </p>
 
 <br/>
 
@@ -70,12 +70,8 @@ div.center {text-align: center;}
 
 <p>RT (and other) instabilities at the interface between SN and ISM can play an important role in ISM physics. The stellar material in SN is enriched with heavy elements created by nuclear fusion towards the end of the star's life. Turbulent mixing infuses the ISM with these metals, which are an important cooling mechanism.</p>
 
-<br/>
-
-<p>RT instabilities have also been observed in the Crab Nebula. The nebula displays a lot of filamentary structure whose origin is most likely the imprint of the magnetic field accelerating particles via synchrotron. However, the finer, small-scale filaments are believed to be RT fingers of a thin layer of stellar ejecta siphoning into the synchrotron nebula. ?????????????????????????????????????????</p>
-
 <h1>Modeling the Effect of Magnetic Fields in RT Instabilities: Methodology</h1>
-<p>I have been interested in modeling the effect of magnetic fields on the growth of RT instabilities. To do so, I have been using a helpful tutorial by Philip Mocz (ref _????????_) on creating RT simulations in Python using a technique called the Finite Volume Method (FVM). Essentially how it works is, you divide your fluid into fluid elements called cells, each of which has an initial set of "primitive" variables that define the state of the fluid. In our case, these primitive variables are mass, velocity, and pressure, and the vector potential. A set of equations, called the Euler equations, describe the time evolution of the variables. In addition, we have source terms that perturb the system - in our case, these sources are the effective gravity and the acceleration due to magnetic forces. The Euler equations are summarized below.
+<p>I have been interested in modeling the effect of magnetic fields on the growth of RT instabilities. To do so, I have been using a helpful tutorial by Philip Mocz (ref 6) on creating RT simulations in Python using a technique called the Finite Volume Method (FVM). Essentially how it works is, you divide your fluid into fluid elements called cells, each of which has an initial set of "primitive" variables that define the state of the fluid. In our case, these primitive variables are mass, velocity, and pressure, and the vector potential. A set of equations, called the Euler equations, describe the time evolution of the variables. In addition, we have source terms that perturb the system - in our case, these sources are the effective gravity and the acceleration due to magnetic forces. The Euler equations are summarized below.
 
 <p style="text-align:center">&nbsp;&nbsp; Mass Continuity:&nbsp;&nbsp; \(\frac{\partial\rho}{\partial t} + \rho\ (\nabla \cdot \vec{v})=0\)</p>
 <p style="text-align:center">&nbsp;&nbsp; Momentum Equation:&nbsp;&nbsp; \(\rho\ (\frac{\partial\vec{v}}{\partial t} + \vec{v} \cdot \nabla \vec{v}) -\nabla P = \vec{J} \times \vec{B} + \rho g\ \hat y\)</p>
@@ -100,25 +96,26 @@ div.center {text-align: center;}
 <p>With this framework in place, we are ready to simulate RT instabilities in magnetic fields!</p>
 
 <h1>Modeling the Effect of Magnetic Fields in RT Instabilities: Results</h1>
-<p>In our example simulation, we begin with a two-layer 2D fluid with the denser medium on top and a magnetic field in the 2D plane, as shown in Figure 4. Notice that the magnetic field displays concavity in the positive and negative y-directions: from this, we expect magnetic tension forces opposing this concavity. We also have regions of higher magnetic energy density on the edges, from which we expect pressure forces pointed towards the center of the fluid. Some of these forces (deliberately chosen) will work to counteract the pull of gravity in the negative y-direction.</p>
+<p>In our example simulation, we begin with a two-layer 2D fluid with the denser medium on top and a magnetic field in the 2D plane, as shown in Figure 4. Notice that the magnetic field displays concavity in the positive and negative x and y-directions: from this, we expect magnetic tension forces opposing this concavity. We also have regions of higher magnetic energy density in the corners, from which we expect pressure forces pointed towards the center of the fluid. Some of these forces (deliberately chosen) will work to counteract the pull of gravity in the negative y-direction.</p>
 
 <p>Weak magnetic field: If we begin with an weak magnetic field, the RT instability will evolve mostly unaffected by the magnetic forces. We see the typical plume of lighter material being expelled upwards into the denser material. (Note: in these simulations, density is being plotted. Yellow represents higher density, blue lower.) Over time, the two-fluid system homogenizes into one with intermediate density.</p>
 
-<p>Moderate magnetic field: If we increase the strength of the magnetic field, we begin to see the effect of magnetic forces counteracting the gravitational forces. Notably, a clump of high density material forms that sits on top of the head of the RT finger, preventing it from moving upwards.</p>
+<p>Moderate magnetic field: If we increase the strength of the magnetic field, we begin to see the effect of magnetic forces. The finger emerges at a much later time and grows more slowly. Interestingly, a clump of higher density material forms on top of the head of the RT finger, preventing it from growing upwards. Instead, the finger is forced to expand laterally, where the surrounding medium is less dense. This might be due to the magnetic pressure forces, which are dominant over the tension forces, pushing material towards the center of the column.</p>
 
-<p>Strong magnetic field: If we increase the magnetic field even more, we see that the instability is unable to grow. The ripples of changing density that you see in the simulation are due to the initial inhomogenous magnetic field, from which arises magnetic forces that try to straighten the field lines and equilibriate the magnetic density, which then push the fluid in certain directions, resulting in thin lines/regions of higher density.</p>
+<p>Strong magnetic field: If we increase the magnetic field further, we see that the instability is unable to grow. The ripples of changing density that you see in the simulation are due to the initial inhomogenous magnetic field creating forces that push the fluid around, resulting in lines/regions of higher density. We once again see the area of high density at the center of the column. The fact that it's present in both the moderate and strong magnetic field simulations makes me suspect that it is due to the pressure force collecting material there.</p>
 
 <p>The script used to generate the simulation is linked below. Feel free to play around the parameters (I have highlighted the ones that are most physically relevant) and see how that changes the dynamics of the instability!</p>
 
 <a href="finitevolume2.py">Link to MHD Simulation File</a>
 
 <h1>References</h1>
-<p>(1) Tycho SN: https://adsabs.harvard.edu/pdf/1998A%26A...334.1060V</p>
-<p>(2) Crab Nebula: https://authors.library.caltech.edu/53722/1/1996ApJ___456__225H.pdf</p>
-<p>(3) Reynold’s Number and Viscosity: https://www.grc.nasa.gov/www/BGH/reynolds.html</p>
-<p>(4) Reynold’s Number and Viscosity: https://www.grc.nasa.gov/www/k-12/airplane/boundlay.html</p>
-<p>(5) MHD Modeling: https://philip-mocz.medium.com/create-your-own-finite-volume-fluid-simulation-with-python-part-2-boundary-conditions-source-bda6994b4645</p>
-<p>(6) MHD Modeling: https://digitalrepository.wheatoncollege.edu/bitstream/handle/11040/24316/My_Honors_Thesis_v4Final.pdf?isAllowed=y&sequence=1</p>
+<p style="text-align:left">(1) Tycho SN: <a href="https://adsabs.harvard.edu/pdf/1998A%26A...334.1060V">https://adsabs.harvard.edu/pdf/1998A%26A...334.1060V</a></p>
+<p style="text-align:left">(2) Crab Nebula: <a href="https://authors.library.caltech.edu/53722/1/1996ApJ___456__225H.pdf">https://authors.library.caltech.edu/53722/1/1996ApJ___456__225H.pdf</a></p>
+<p style="text-align:left">(3) Richtmyer-Meshkov Instability: <a href="https://iopscience.iop.org/article/10.1086/306685/fulltext/">https://iopscience.iop.org/article/10.1086/306685/fulltext/</a></p>
+<p style="text-align:left">(4) Reynold’s Number and Viscosity: <a href="https://www.grc.nasa.gov/www/BGH/reynolds.html">https://www.grc.nasa.gov/www/BGH/reynolds.html</a></p>
+<p style="text-align:left">(5) Reynold’s Number and Viscosity: <a href="https://www.grc.nasa.gov/www/k-12/airplane/boundlay.html">https://www.grc.nasa.gov/www/k-12/airplane/boundlay.html</a></p></p>
+<p style="text-align:left">(6) MHD Modeling: <a href="https://philip-mocz.medium.com/create-your-own-finite-volume-fluid-simulation-with-python-part-2-boundary-conditions-source-bda6994b4645">https://philip-mocz.medium.com/create-your-own-finite-volume-fluid-simulation-with-python-part-2-boundary-conditions-source-bda6994b4645</a></p>
+<p style="text-align:left">(7) MHD Modeling: <a href="https://digitalrepository.wheatoncollege.edu/bitstream/handle/11040/24316/My_Honors_Thesis_v4Final.pdf?isAllowed=y&sequence=1">https://digitalrepository.wheatoncollege.edu/bitstream/handle/11040/24316/My_Honors_Thesis_v4Final.pdf?isAllowed=y&sequence=1</a></p>
 
 </div>
 
@@ -131,6 +128,8 @@ div.center {text-align: center;}
 </figure>
 </div>
 
+</br/>
+
 <div class="center">
 <figure>
 <img src="snr_layers.png">
@@ -138,6 +137,7 @@ div.center {text-align: center;}
 </figure>
 </div>
 
+</br/>
 
 <div class="center">
 <figure>
@@ -146,6 +146,26 @@ div.center {text-align: center;}
 </figure>
 </div>
 
+</br/>
+
+<div class="center">
+<figure>
+<img src="Bfield.png">
+<figcaption>Figure 4a. Initial Magnetic Field Distribution. The lines represent the field direction and the shading represents the magnitude. The gradient in magnetic field strength creates a pressure force pointing from areas of higher to lower magnetic energy density. The curvature in the field lines (concave out towards the edges) creates a tension force pointing towards the edges of the box, which acts to straighten the field lines. These effects have been verified in the simulation. </figcaption>
+</figure>
+</div>
+
+</br/>
+
+<div class="center">
+<figure>
+<img style="width:700px!important"; src="Bfield_closeup.png">
+<figcaption>Figure 4b. Close-up view of the B field lines. </figcaption>
+</figure>
+</div>
+
+</br/>
+
 <div class="center">
 <video controls>
 <source src="sim_small.mp4" type="video/mp4">
@@ -153,7 +173,9 @@ Your browser does not support the video tag.
 </video>
 </div>
 
-<p style="text-align:center"> Video 1: Simulation of RT instability with Weak Magnetic Field </p>
+<p style="text-align:center; font-size:16px"> Video 1: Simulation of RT instability with Weak Magnetic Field </p>
+
+</br/>
 
 <div class="center">
 <video controls>
@@ -162,7 +184,9 @@ Your browser does not support the video tag.
 </video>
 </div>
 
-<p style="text-align:center"> Video 2: Simulation of RT instability with Moderate Magnetic Field </p>
+<p style="text-align:center; font-size:16px"> Video 2: Simulation of RT instability with Moderate Magnetic Field </p>
+
+</br/>
 
 <div class="center">
 <video controls>
@@ -171,7 +195,7 @@ Your browser does not support the video tag.
 </video>
 </div>
 
-<p style="text-align:center"> Video 3: Simulation of RT instability with Strong Magnetic Field </p>
+<p style="text-align:center; font-size:16px"> Video 3: Simulation of RT instability with Strong Magnetic Field </p>
 
 </div>
 </div>
